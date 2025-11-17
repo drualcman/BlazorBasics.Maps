@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorBasics.Maps.Google", "Src\BlazorBasics.Maps.Google\BlazorBasics.Maps.Google.csproj", "{41D04D61-98F4-64E9-59EB-FA3321676CBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorBasics.Maps.Entities", "Src\BlazorBasics.Maps.Entities\BlazorBasics.Maps.Entities.csproj", "{FC0891AF-D567-48FB-9E1D-5A18C6D9733C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorBasics.Maps.Leaflet", "Src\BlazorBasics.Maps.Leaflet\BlazorBasics.Maps.Leaflet.csproj", "{0116DB85-2977-4839-B724-D78E7C372C0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorBasics.Maps.Services", "Src\BlazorBasics.Maps.Services\BlazorBasics.Maps.Services.csproj", "{6A539819-F181-4276-8FCE-D5C01FB3B815}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{41D04D61-98F4-64E9-59EB-FA3321676CBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41D04D61-98F4-64E9-59EB-FA3321676CBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41D04D61-98F4-64E9-59EB-FA3321676CBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41D04D61-98F4-64E9-59EB-FA3321676CBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC0891AF-D567-48FB-9E1D-5A18C6D9733C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC0891AF-D567-48FB-9E1D-5A18C6D9733C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC0891AF-D567-48FB-9E1D-5A18C6D9733C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC0891AF-D567-48FB-9E1D-5A18C6D9733C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0116DB85-2977-4839-B724-D78E7C372C0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0116DB85-2977-4839-B724-D78E7C372C0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0116DB85-2977-4839-B724-D78E7C372C0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0116DB85-2977-4839-B724-D78E7C372C0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A539819-F181-4276-8FCE-D5C01FB3B815}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A539819-F181-4276-8FCE-D5C01FB3B815}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A539819-F181-4276-8FCE-D5C01FB3B815}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A539819-F181-4276-8FCE-D5C01FB3B815}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AAE61D8B-B856-498D-9DCA-7EA5A461638A}
+	EndGlobalSection
+EndGlobal

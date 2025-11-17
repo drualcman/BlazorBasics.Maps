@@ -1,0 +1,9 @@
+﻿@implements IAsyncDisposable
+@if (!string.IsNullOrWhiteSpace(ApiKey))
+{
+    <div id="@DOMMapId" class="map"></div>
+}
+else
+{
+    <p>Api Key is missing!</p>
+}
