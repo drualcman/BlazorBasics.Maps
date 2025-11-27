@@ -9,4 +9,5 @@ public partial class GoogleMapComponent
     [Parameter] public bool ClosePopupWhenClickOther { get; set; }
     [Parameter] public EventCallback OnMapReady { get; set; }
     [Parameter] public EventCallback<MapClickEventArgs> OnClick { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> Attributes { get; set; }
 }

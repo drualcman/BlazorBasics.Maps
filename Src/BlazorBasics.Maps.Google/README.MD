@@ -1,3 +1,6 @@
+[![Nuget](https://img.shields.io/nuget/v/BlazorBasics.Maps.Google?style=for-the-badge)](https://www.nuget.org/packages/BlazorBasics.Maps.Google)
+[![Nuget](https://img.shields.io/nuget/dt/BlazorBasics.Maps.Google?style=for-the-badge)](https://www.nuget.org/packages/BlazorBasics.Maps.Google)
+
 # BlazorBasics.Maps.Google Library Documentation
 
 ## Overview
@@ -71,8 +74,8 @@ To display a Google Map, include the `GoogleMapComponent` in your Razor page and
 |-------------|------------------------------------|-------------------------------------------------------------------------------|
 | `ApiKey`    | `string`                           | **Required**. Your Google Maps API key.                                       |
 | `MapId`     | `string`                           | **Required**. A custom map ID for styled maps.                                |
-| `OnMapReady`| `EventCallback`                    | Optional. A callback invoked when the map is fully loaded and ready to use.   |
-| `OnClick`   | `EventCallback<MapClickEventArgs>` | Optional. A callback that is invoked when the map or a marker is clicked.     |
+| `OnMapReady`| `EventCallback`                    | A callback invoked when the map is fully loaded and ready to use.             |
+| `OnClick`   | `EventCallback<MapClickEventArgs>` | A callback that is invoked when the map or a marker is clicked.               |
 |             |                                    | It returns the coordinates and address details.                               |
 
 ### Models
@@ -149,7 +152,7 @@ The library includes two main models:
       - MarkerId: The marker ID if one was clicked; otherwise, null.
       - Point: A ILatLong object with the click coordinates.
       - Address: A string containing the address formatted at the point of the click (reverse geocoding).
-      - Details: An IAddressDetails object with the address components broken down.
+      - Details: An `IAddressDetails` object with the address components broken down.
 
 - **`IAddressDetails`**
     - Contains the broken-down components of an address obtained from reverse geocoding.

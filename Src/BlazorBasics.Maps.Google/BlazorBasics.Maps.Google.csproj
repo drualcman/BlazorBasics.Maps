@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		<Version>1.2.0</Version>
+		<Version>1.2.1</Version>
 		<Authors>Sergi Ortiz Gomez</Authors>
 		<Company>DrUalcman</Company>
 		<Description>
@@ -14,10 +14,10 @@
 		<Copyright>Free</Copyright>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/drualcman/BlazorBasics.Maps.Google</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/drualcman/BlazorBasics.Maps.Google</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/drualcman/BlazorBasics.Maps</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/drualcman/BlazorBasics.Maps</PackageProjectUrl>
 		<PackageTags>Components;Blazor;WebAssembly;Maps;Google Maps;</PackageTags>
-		<PackageReleaseNotes>Refactor to use a common dependencies BlazorBasics.Maps. Target to NET10. Update dependencies.</PackageReleaseNotes>
+		<PackageReleaseNotes>Manage Parameters Unmatched. to render correctly map containe.r</PackageReleaseNotes>
 		<RepositoryType>Git</RepositoryType>
 		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
@@ -42,12 +42,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.11"  Condition="'$(TargetFramework)' == 'net9.0'" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0"  Condition="'$(TargetFramework)' == 'net10.0'" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\BlazorBasics.Maps.Entities\BlazorBasics.Maps.Entities.csproj" />
+		<PackageReference Include="BlazorBasics.Maps.Entities" Version="1.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.11" Condition="'$(TargetFramework)' == 'net9.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0" Condition="'$(TargetFramework)' == 'net10.0'" />
 	</ItemGroup>
 
 </Project>

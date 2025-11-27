@@ -13,6 +13,19 @@ public partial class GoogleMapComponent
             throw new ArgumentException("API Key is required to load Google Maps.", nameof(ApiKey));
         if (string.IsNullOrWhiteSpace(MapId))
             throw new ArgumentException("MapId is required to identify the map instance.", nameof(MapId));
+
+        if (Attributes == null)
+        {
+            Attributes = new Dictionary<string, object>();
+        }
+        if (Attributes.TryGetValue("class", out var cssClass))
+        {
+            Attributes["class"] = $"map {cssClass}";
+        }
+        else
+        {
+            Attributes.Add("class", "map");
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
