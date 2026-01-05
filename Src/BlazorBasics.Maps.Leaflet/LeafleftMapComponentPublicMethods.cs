@@ -1,8 +1,8 @@
 namespace BlazorBasics.Maps.Leaflet;
 
-public partial class Map : IAsyncDisposable
+public partial class LeafleftMapComponent : IAsyncDisposable
 {
-    public async Task CreateMap(ILatLong point, byte zoomLevel = 19)
+    private async Task CreateMap(ILatLong point, byte zoomLevel = 19)
     {
         try
         {
@@ -16,7 +16,7 @@ public partial class Map : IAsyncDisposable
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteAsync(ex.ToString());
+            await Console.Out.WriteAsync(ex.Message);
         }
         IsMapReady = true;
         await InvokeAsync(StateHasChanged);

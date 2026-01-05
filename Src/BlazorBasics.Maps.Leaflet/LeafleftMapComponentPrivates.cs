@@ -1,8 +1,8 @@
 namespace BlazorBasics.Maps.Leaflet;
 
-public partial class Map : IAsyncDisposable
+public partial class LeafleftMapComponent : IAsyncDisposable
 {
-    DotNetObjectReference<Map> ObjRef;
+    DotNetObjectReference<LeafleftMapComponent> ObjRef;
     string MapId = $"map-{Guid.NewGuid()}";
     bool IsMapReady = false;
 

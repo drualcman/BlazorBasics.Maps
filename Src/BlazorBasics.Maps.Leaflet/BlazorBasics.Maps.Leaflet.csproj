@@ -9,13 +9,16 @@
 		<Authors>Sergi Ortiz Gomez</Authors>
 		<Company>DrUalcman</Company>
 		<Description>
-			A Blazor component for integrating Leaflet Javascrip Map into your applications. Easily display interactive maps, add custom markers, show routes with waypoints, and manage map interactions using a simple C# interface. Requires a Google Maps API key and the Maps JavaScript API.
+			A Blazor component for integrating Leaflet Javascrip Map into your applications. Easily display interactive maps, add custom markers, show routes with waypoints, and manage map interactions using a simple C# interface.
 		</Description>
 		<PackageTags>Components;Blazor;WebAssembly;Maps;Leaflet;Leaflet Maps;</PackageTags>
 		<PackageReleaseNotes>First release.</PackageReleaseNotes>
 		<Copyright>Free</Copyright>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/drualcman/BlazorBasics.Maps</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/drualcman/BlazorBasics.Maps</PackageProjectUrl>
+		<PackageTags>Components;Blazor;WebAssembly;Maps;Leaflet;Leaflet Maps;</PackageTags>
 		<PackageIcon>icon.jpg</PackageIcon>
 	</PropertyGroup>
 
@@ -24,12 +27,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="BlazorBasics.Maps.Entities" Version="1.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.11"  Condition="'$(TargetFramework)' == 'net9.0'" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0"  Condition="'$(TargetFramework)' == 'net10.0'" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\BlazorBasics.Maps.Entities\BlazorBasics.Maps.Entities.csproj" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1"  Condition="'$(TargetFramework)' == 'net10.0'" />
 	</ItemGroup>
 
 	<ItemGroup>

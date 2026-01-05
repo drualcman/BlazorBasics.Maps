@@ -1,6 +1,6 @@
 namespace BlazorBasics.Maps.Leaflet;
 
-public partial class Map : IAsyncDisposable
+public partial class LeafleftMapComponent : IAsyncDisposable
 {
     protected override void OnInitialized()
     {

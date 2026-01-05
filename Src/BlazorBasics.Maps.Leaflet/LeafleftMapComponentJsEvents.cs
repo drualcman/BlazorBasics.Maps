@@ -1,6 +1,6 @@
 namespace BlazorBasics.Maps.Leaflet;
 
-public partial class Map : IAsyncDisposable
+public partial class LeafleftMapComponent : IAsyncDisposable
 {
     [JSInvokable]
     public async Task OnDragend(DragendMarkerInternalEventArgs e)
