@@ -39,7 +39,7 @@ public partial class GoogleMapComponent
             bool loaded = await GoogleMapsModule.InvokeAsync<bool>("load", ApiKey, ScriptId);
             if (loaded)
             {
-                await GoogleMapsModule.InvokeVoidAsync("initMap", DOMMapId, MapId, ClosePopupWhenClickOther);
+                await GoogleMapsModule.InvokeVoidAsync("initMap", DOMMapId, MapId, ClosePopupWhenClickOther, StartZoomLevel);
                 if (OnClick.HasDelegate)
                 {
                     await GoogleMapsModule.InvokeVoidAsync("enableMapClick", dotNetRef, nameof(OnMapClick));

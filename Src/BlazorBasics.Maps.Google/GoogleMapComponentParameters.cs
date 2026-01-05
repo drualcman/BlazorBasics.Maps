@@ -5,6 +5,7 @@ public partial class GoogleMapComponent
     [Inject] private IJSRuntime JS { get; set; } = default!;
     [Parameter] public string ApiKey { get; set; } = string.Empty;
     [Parameter] public string MapId { get; set; } = string.Empty;
+    [Parameter] public int StartZoomLevel { get; set; } = 13;
     [Parameter] public bool ClosePopupWhenClickOnMap { get; set; } = true;
     [Parameter] public bool ClosePopupWhenClickOther { get; set; }
     [Parameter] public EventCallback OnMapReady { get; set; }

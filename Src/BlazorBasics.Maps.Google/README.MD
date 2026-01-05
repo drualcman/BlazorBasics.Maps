@@ -49,6 +49,7 @@ To display a Google Map, include the `GoogleMapComponent` in your Razor page and
 <GoogleMapComponent @ref="mapComponent"
                   ApiKey="TU_CLAVE_DE_API_DE_GOOGLE_MAPS"
                   MapId="TU_ID_DE_MAPA_PERSONALIZADO"
+                  StartZoomLevel=15
                   OnMapReady="@OnMapReadyCallback"
                   OnClick="@OnMapClickCallback" />
 
@@ -70,13 +71,14 @@ To display a Google Map, include the `GoogleMapComponent` in your Razor page and
 
 ### Component Parameters
 
-| Parameter   | Type                               | Description                                                                   |
-|-------------|------------------------------------|-------------------------------------------------------------------------------|
-| `ApiKey`    | `string`                           | **Required**. Your Google Maps API key.                                       |
-| `MapId`     | `string`                           | **Required**. A custom map ID for styled maps.                                |
-| `OnMapReady`| `EventCallback`                    | A callback invoked when the map is fully loaded and ready to use.             |
-| `OnClick`   | `EventCallback<MapClickEventArgs>` | A callback that is invoked when the map or a marker is clicked.               |
-|             |                                    | It returns the coordinates and address details.                               |
+| Parameter       | Type                               | Description                                                                   |
+|-----------------|------------------------------------|-------------------------------------------------------------------------------|
+| `ApiKey`        | `string`                           | **Required**. Your Google Maps API key.                                       |
+| `MapId`         | `string`                           | **Required**. A custom map ID for styled maps.                                |
+| `StartZoomLevel`| `int`                              | Zoom level to apply to the view when map render. Default valur 13.            |
+| `OnMapReady`    | `EventCallback`                    | A callback invoked when the map is fully loaded and ready to use.             |
+| `OnClick`       | `EventCallback<MapClickEventArgs>` | A callback that is invoked when the map or a marker is clicked.               |
+|                 |                                    | It returns the coordinates and address details.                               |
 
 ### Models
 
@@ -262,6 +264,7 @@ Below is an example of a Razor page that uses the `GoogleMapComponent` to displa
 <GoogleMapComponent @ref="mapComponent"
                   ApiKey="TU_CLAVE_DE_API_DE_GOOGLE_MAPS"
                   MapId="TU_ID_DE_MAPA_PERSONALIZADO"
+                  StartZoomLevel=10
                   OnMapReady="@OnMapReadyCallback"
                   OnClick="@OnMapClickCallback" />
 

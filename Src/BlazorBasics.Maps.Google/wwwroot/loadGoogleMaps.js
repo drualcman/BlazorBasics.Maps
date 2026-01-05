@@ -13,6 +13,7 @@ let myElementId = null;
 let myMapId = null;
 let loadResolve = null;
 let loadReject = null;
+let zoomLevel = 13;
 let closePopupWhenClickOther = false;
 
 function googleMapsCallback() {
@@ -62,13 +63,14 @@ function load(apiKey, scriptId) {
     });
 }
 
-function initMap(elementId, mapId, closeOnClick) {
+function initMap(elementId, mapId, closeOnClick, zoom) {
     closePopupWhenClickOther = closeOnClick ?? false;
+    zoomLevel = zoom ?? 13;
     myElementId = elementId;
     myMapId = mapId;
     map = new google.maps.Map(document.getElementById(myElementId), {
         center: { lat: 0, lng: 0 },
-        zoom: 16,
+        zoom: zoomLevel,
         fullscreenControl: false,
         streetViewControl: false,
         mapTypeControl: false,
@@ -244,7 +246,7 @@ function cleanMap() {
     markers.clear();
     routes.clear();
     infoWindows.clear();
-    initMap(myElementId, myMapId, closePopupWhenClickOther);
+    initMap(myElementId, myMapId, closePopupWhenClickOther, zoomLevel);
     console.log('Map cleared');
     return true;
 }
