@@ -1,3 +1,7 @@
+[![Nuget](https://img.shields.io/nuget/v/BlazorBasics.Maps.Entities?style=for-the-badge)](https://www.nuget.org/packages/BlazorBasics.Maps.Entities)
+[![Nuget](https://img.shields.io/nuget/dt/BlazorBasics.Maps.Entities?style=for-the-badge)](https://www.nuget.org/packages/BlazorBasics.Maps.Entities)
+
+
 # BlazorBasics.Maps Library Documentation
 
 ## Overview

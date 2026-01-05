@@ -1,21 +1,45 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+	  <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Version>1.2.0</Version>
+	  <Authors>Sergi Ortiz Gomez</Authors>
+	  <Company>DrUalcman</Company>
+	  <Description>
+		  A lightweight and efficient Blazor service for interacting with the Browser's **Geolocation API**.
+	  </Description>
+	  <Copyright>Free</Copyright>
+	  <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <RepositoryUrl>https://github.com/drualcman/BlazorBasics.Maps</RepositoryUrl>
+	  <PackageProjectUrl>https://github.com/drualcman/BlazorBasics.Maps</PackageProjectUrl>
+	  <PackageTags>Components;Blazor;WebAssembly;Maps;Geolocation;</PackageTags>
+	  <PackageReleaseNotes>First release.</PackageReleaseNotes>
+	  <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
+	
+	<ItemGroup>
+		<None Include="..\LICENSE.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.11" Condition="'$(TargetFramework)' == 'net9.0'" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" Condition="'$(TargetFramework)' == 'net10.0'" />
+	  <PackageReference Include="BlazorBasics.Maps.Entities" Version="1.2.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\BlazorBasics.Maps.Entities\BlazorBasics.Maps.Entities.csproj" />
-  </ItemGroup>
-
+	
 </Project>

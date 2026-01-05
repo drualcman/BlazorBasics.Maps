@@ -2,11 +2,8 @@
 	<PropertyGroup>
 		<TargetFrameworks>net9.0;net10.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<TargetFrameworks>net9.0;net10.0</TargetFrameworks>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		<Version>1.2.0</Version>
+		<Version>1.2.1</Version>
 		<Authors>Sergi Ortiz Gomez</Authors>
 		<Company>DrUalcman</Company>
 		<Description>
@@ -15,9 +12,9 @@
 		<Copyright>Free</Copyright>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/drualcman/BlazorBasics.Maps.Google</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/drualcman/BlazorBasics.Maps.Google</PackageProjectUrl>
-		<PackageTags>Components;Blazor;WebAssembly;Maps;Google Maps;</PackageTags>
+		<RepositoryUrl>https://github.com/drualcman/BlazorBasics.Maps</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/drualcman/BlazorBasics.Maps</PackageProjectUrl>
+		<PackageTags>Components;Blazor;WebAssembly;Maps;BlazorBasics.Maps.Google;BlazorBasics.Maps.Leaflet;</PackageTags>
 		<PackageReleaseNotes>First release.</PackageReleaseNotes>
 		<RepositoryType>Git</RepositoryType>
 	</PropertyGroup>
