@@ -18,14 +18,23 @@ public partial class GoogleMapComponent
         {
             Attributes = new Dictionary<string, object>();
         }
-        if (Attributes.TryGetValue("class", out var cssClass))
+
+        string existingClasses = string.Empty;
+        if (Attributes.TryGetValue("class", out var cssClassObj))
         {
-            Attributes["class"] = $"map {cssClass}";
+            existingClasses = cssClassObj?.ToString() ?? string.Empty;
         }
-        else
+
+        List<string> classList = existingClasses
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .ToList();
+
+        if (!classList.Contains("map"))
         {
-            Attributes.Add("class", "map");
+            classList.Add("map"); // Add at the end, preserving original order
         }
+
+        Attributes["class"] = string.Join(" ", classList);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

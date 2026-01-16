@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		<Version>1.2.1</Version>
+		<Version>1.2.2</Version>
 		<Authors>Sergi Ortiz Gomez</Authors>
 		<Company>DrUalcman</Company>
 		<Description>
@@ -17,7 +17,7 @@
 		<RepositoryUrl>https://github.com/drualcman/BlazorBasics.Maps</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/drualcman/BlazorBasics.Maps</PackageProjectUrl>
 		<PackageTags>Components;Blazor;WebAssembly;Maps;Google Maps;</PackageTags>
-		<PackageReleaseNotes>Add Zoom Level to parameters for initialize map. Update dependencies</PackageReleaseNotes>
+		<PackageReleaseNotes>Fixed small issue duplicate map class each render action. Update dependencies</PackageReleaseNotes>
 		<RepositoryType>Git</RepositoryType>
 		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
@@ -43,8 +43,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="BlazorBasics.Maps.Entities" Version="1.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.11" Condition="'$(TargetFramework)' == 'net9.0'" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" Condition="'$(TargetFramework)' == 'net10.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.12" Condition="'$(TargetFramework)' == 'net9.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.2" Condition="'$(TargetFramework)' == 'net10.0'" />
 	</ItemGroup>
 
 </Project>
