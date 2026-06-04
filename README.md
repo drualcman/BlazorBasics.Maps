@@ -33,21 +33,13 @@ Both libraries share the exact same models and contracts thanks to the common `B
 
 ### When to use each one?
 
-<pre>
-+----------------------------------------------------------------+-------------------+
 | Situation                                                      | Recommended       |
-+----------------------------------------------------------------+-------------------+
+|:---------------------------------------------------------------|:------------------|
 | You need real routes and modes of transport                    | Google Maps       |
-+----------------------------------------------------------------+-------------------+
 | You want to avoid API costs from Google                        | Leaflet / OSM     |
-+----------------------------------------------------------------+-------------------+
 | Your client already pays for Google Maps Platform              | Google Maps       |
-+----------------------------------------------------------------+-------------------+
 | Open-source project or limited budget Limited                  | Leaflet           |
-+----------------------------------------------------------------+-------------------+
 | You need maximum customization of styles and arrows on routes  | Google Maps       |
-+----------------------------------------------------------------+-------------------+
-</pre>
 
 # Contributions
 If you find bugs or want to add new features (support for polygons, layers, clustering, etc.), you are welcome to open issues or pull requests in this repository.
