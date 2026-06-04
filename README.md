@@ -33,6 +33,7 @@ Both libraries share the exact same models and contracts thanks to the common `B
 
 ### When to use each one?
 
+<pre>
 +----------------------------------------------------------------+-------------------+
 | Situation                                                      | Recommended       |
 +----------------------------------------------------------------+-------------------+
@@ -46,6 +47,7 @@ Both libraries share the exact same models and contracts thanks to the common `B
 +----------------------------------------------------------------+-------------------+
 | You need maximum customization of styles and arrows on routes  | Google Maps       |
 +----------------------------------------------------------------+-------------------+
+</pre>
 
 # Contributions
 If you find bugs or want to add new features (support for polygons, layers, clustering, etc.), you are welcome to open issues or pull requests in this repository.
