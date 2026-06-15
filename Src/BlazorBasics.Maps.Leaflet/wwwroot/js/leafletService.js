@@ -21,12 +21,38 @@ const createMap = (mapId, point, zoomLevel) => {
     element.Map = map;
     */
 
+    // Cuando el mapa se crea dentro de un contenedor oculto o que aun se esta mostrando
+    // (un modal, un panel colapsado, etc.) Leaflet cachea un tamano 0x0 y las teselas salen
+    // grises/parciales. Forzamos un recalculo en el primer frame y observamos el contenedor
+    // para reajustar en cuanto adquiere tamano real. invalidateSize() es un no-op cuando el
+    // tamano no cambia, asi que es seguro y retrocompatible.
+    const container = document.getElementById(mapId);
+    if (container) {
+        requestAnimationFrame(() => map.invalidateSize());
+        if (typeof ResizeObserver !== 'undefined') {
+            let lastW = container.clientWidth, lastH = container.clientHeight;
+            const ro = new ResizeObserver(() => {
+                const w = container.clientWidth, h = container.clientHeight;
+                if (w > 0 && h > 0 && (w !== lastW || h !== lastH)) {
+                    lastW = w; lastH = h;
+                    map.invalidateSize();
+                }
+            });
+            ro.observe(container);
+            map._sizeObserver = ro;
+        }
+    }
+
     console.info(`map ${mapId} created.`);
 }
 
 const deleteMap = (mapId) => {
     let map = maps.get(mapId);
     maps.delete(mapId);
+    if (map._sizeObserver) {
+        map._sizeObserver.disconnect();
+        map._sizeObserver = null;
+    }
     map.remove();
     console.info(`map ${mapId} removed.`);
 }
@@ -124,7 +150,7 @@ const setPopupMarkerContent = (mapId, markerId, content) => {
 const GetMarker = (mapId, markerId) =>
     maps.get(mapId).addedMarkers[markerId];
 
-// Función para geocoding inverso (obtener dirección desde coordenadas)
+// Funcion para geocoding inverso (obtener direccion desde coordenadas)
 const reverseGeocode = async (lat, lng) => {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
@@ -151,7 +177,7 @@ const reverseGeocode = async (lat, lng) => {
     return { address: '', addressDetails: null };
 }
 
-// Función para verificar si el click fue sobre un marker
+// Funcion para verificar si el click fue sobre un marker
 const findClickedMarker = (map, latlng) => {
     for (let i = 0; i < map.addedMarkers.length; i++) {
         const marker = map.addedMarkers[i];
@@ -181,7 +207,7 @@ const setClickHandler = async (mapId, dotNet, clickHandlerMethod) => {
         const clickedMarker = findClickedMarker(map, event.latlng);
         const markerId = clickedMarker ? clickedMarker.markerId.toString() : null;
 
-        // Obtener información de geocoding
+        // Obtener informacion de geocoding
         let geocodeInfo = { address: '', addressDetails: null };
         if (lat !== 0 || lng !== 0) { // evita hacer reverse geocoding en 0,0 si no es necesario
             try {

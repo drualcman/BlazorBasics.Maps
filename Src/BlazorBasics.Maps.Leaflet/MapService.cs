@@ -1,4 +1,5 @@
 ﻿namespace BlazorBasics.Maps.Leaflet;
+
 public sealed class MapService : IAsyncDisposable
 {
     readonly Lazy<Task<IJSObjectReference>> ModuleTask;
@@ -10,7 +11,7 @@ public sealed class MapService : IAsyncDisposable
 
     private Task<IJSObjectReference> GetJSObjectReference(IJSRuntime jsRuntime) =>
         jsRuntime.InvokeAsync<IJSObjectReference>(
-            "import", $"./{ContentHelper.ContentPath}/js/leafletService.js").AsTask();
+            "import", $"./{ContentHelper.ContentPath}/js/leafletService.js?v=122").AsTask();
 
     public async ValueTask DisposeAsync()
     {
