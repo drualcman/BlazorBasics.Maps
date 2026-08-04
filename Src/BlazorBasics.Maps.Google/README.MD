@@ -71,14 +71,24 @@ To display a Google Map, include the `GoogleMapComponent` in your Razor page and
 
 ### Component Parameters
 
-| Parameter       | Type                               | Description                                                                   |
-|-----------------|------------------------------------|-------------------------------------------------------------------------------|
-| `ApiKey`        | `string`                           | **Required**. Your Google Maps API key.                                       |
-| `MapId`         | `string`                           | **Required**. A custom map ID for styled maps.                                |
-| `StartZoomLevel`| `int`                              | Zoom level to apply to the view when map render. Default valur 13.            |
-| `OnMapReady`    | `EventCallback`                    | A callback invoked when the map is fully loaded and ready to use.             |
-| `OnClick`       | `EventCallback<MapClickEventArgs>` | A callback that is invoked when the map or a marker is clicked.               |
-|                 |                                    | It returns the coordinates and address details.                               |
+| Parameter                            | Type                               | Description                                                                   |
+|--------------------------------------|------------------------------------|-------------------------------------------------------------------------------|
+| `ApiKey`                             | `string`                           | **Required**. Your Google Maps API key.                                       |
+| `MapId`                              | `string`                           | Optional. A custom map ID for styled maps. Needed to render markers and routes,|
+|                                      |                                    | because they use advanced markers. Not needed for the center pin.             |
+| `StartZoomLevel`                     | `int`                              | Zoom level to apply to the view when map render. Default valur 13.            |
+| `OnMapReady`                         | `EventCallback`                    | A callback invoked when the map is fully loaded and ready to use.             |
+| `OnClick`                            | `EventCallback<MapClickEventArgs>` | A callback that is invoked when the map or a marker is clicked.               |
+|                                      |                                    | It returns the coordinates and address details.                               |
+| `ShowCenterPin`                      | `bool`                             | Shows a pin fixed at the center of the map. The user moves the map under it   |
+|                                      |                                    | instead of dragging a marker. Default false.                                  |
+| `CenterPinSvgIcon`                   | `string`                           | SVG markup for the center pin. A red pin is used when it is empty.           |
+| `GeocodeCenterOnMove`                | `bool`                             | Reverse geocodes the center to fill `Address` and `Details` on every move.    |
+|                                      |                                    | Set it to false to receive coordinates only and avoid geocoding calls.        |
+|                                      |                                    | Default true.                                                                 |
+| `CenterChangedDebounceMilliseconds`  | `int`                              | Debounce applied before reporting the new center. Default 300.                |
+| `OnCenterChanged`                    | `EventCallback<MapClickEventArgs>` | A callback invoked after every pan or zoom with the position of the center pin.|
+|                                      |                                    | Enabling it enables the center pin as well.                                   |
 
 ### Models
 
@@ -250,6 +260,64 @@ The `GoogleMapComponent` provides the following methods to interact with the map
      await mapComponent.RemoveRoute("route1");
      ```
 
+10. **`SearchAddress(string address)`**:
+    - Forward geocoding. Returns a `MapClickEventArgs` with the coordinates, the formatted address and the broken-down details, or `null` when Google cannot resolve it.
+    - Example:
+      ```csharp
+      MapClickEventArgs found = await mapComponent.SearchAddress("1600 Amphitheatre Parkway, Mountain View, CA");
+      ```
+
+11. **`SearchAddressAndCenter(string address)`**:
+    - Same as `SearchAddress` and centers the map on the result when it is found.
+    - Example:
+      ```csharp
+      MapClickEventArgs found = await mapComponent.SearchAddressAndCenter("Mountain View, CA");
+      ```
+
+12. **`GetCenter()`**:
+    - Returns the current center of the map as a `PositionPoint` without geocoding it, or `null` when the map is not ready.
+    - Example:
+      ```csharp
+      PositionPoint center = await mapComponent.GetCenter();
+      ```
+
+13. **`RefreshCenter()`**:
+    - Forces an `OnCenterChanged` invocation with the current center. Useful after centering the map from code, because programmatic centering does not raise the event.
+    - Example:
+      ```csharp
+      await mapComponent.CenterMap(point);
+      await mapComponent.RefreshCenter();
+      ```
+
+14. **`EnableCenterPin()` / `DisableCenterPin()`**:
+    - Turns the center pin on or off at runtime. It is enabled automatically when `ShowCenterPin` is true or `OnCenterChanged` has a delegate.
+    - Example:
+      ```csharp
+      await mapComponent.DisableCenterPin();
+      ```
+
+### Picking a location with the center pin
+
+The center pin keeps the pin fixed in the middle of the map and lets the user move the map underneath it. Every pan or zoom reports the new position, so the last one received is the chosen location.
+
+```razor
+<GoogleMapComponent ApiKey="@ApiKey"
+                    ShowCenterPin="true"
+                    StartZoomLevel="18"
+                    CenterChangedDebounceMilliseconds="500"
+                    OnCenterChanged="OnCenterChangedCallback" />
+
+@code {
+    private void OnCenterChangedCallback(MapClickEventArgs args)
+    {
+        Console.WriteLine($"Lat: {args.Point?.Latitude}, Lng: {args.Point?.Longitude}");
+        Console.WriteLine($"Address: {args.Address}");
+    }
+}
+```
+
+The event is raised on `dragend` and `zoom_changed`, not on every frame of the gesture, so one movement produces one call. Each call reverse geocodes the center unless `GeocodeCenterOnMove` is false.
+
 ### Example: Full Implementation
 
 Below is an example of a Razor page that uses the `GoogleMapComponent` to display a map, add a marker, and show a route.
@@ -272,7 +340,7 @@ Below is an example of a Razor page that uses the `GoogleMapComponent` to displa
 
 @code {
     private GoogleMapComponent mapComponent = default!;
-    private string clickedAddress = "Haz clic en el mapa para ver la dirección aquí.";
+    private string clickedAddress = "Haz clic en el mapa para ver la direcciï¿½n aquï¿½.";
 
     private async Task OnMapReadyCallback()
     {
@@ -330,15 +398,18 @@ Below is an example of a Razor page that uses the `GoogleMapComponent` to displa
 
 ## Notes
 
-- **JavaScript Interop**: The library relies on the `loadGoogleMaps.js` file for Google Maps API interactions. Ensure this file is correctly implemented and includes functions like `load`, `initMap`, `addPoint`, `removePoint`, `centerMap`, `cleanMap`, `showRoute`, `showRouteWithWaypoints`, `highlightMarker`, `unhighlightMarker`, `enableMapClick` and `disableMapClick` .
+- **JavaScript Interop**: The library relies on the `loadGoogleMaps.js` file for Google Maps API interactions. Ensure this file is correctly implemented and includes functions like `load`, `initMap`, `addPoint`, `removePoint`, `centerMap`, `cleanMap`, `showRoute`, `showRouteWithWaypoints`, `highlightMarker`, `unhighlightMarker`, `enableMapClick`, `disableMapClick`, `enableCenterPin`, `disableCenterPin`, `refreshCenter`, `getCenter` and `geocodeAddress`.
 - **Error Handling**: The component checks for a valid `ApiKey`. If missing, it displays a message: "API Key is required to load Google Maps.".
-- **Error Handling**: The component checks for a valid `MapId`. If missing, it displays a message: "MapId is required to identify the map instance.".
+- **MapId**: Optional. Markers and routes use advanced markers, which Google only renders on a map created with a map ID, so a console warning is written when `AddPoint`, `ShowRoute` or `ShowRouteWithWaypoints` run without it. The center pin is a DOM overlay and works without it.
 - **Coordinate Validation**: The `PositionPoint` struct validates latitude and longitude to prevent invalid coordinates.
 - **Custom Styling**: Use the `MapId` parameter to apply custom map styles created in the Google Cloud Console.
+- **Geocoding**: `SearchAddress`, `SearchAddressAndCenter` and the address returned by `OnClick` and `OnCenterChanged` use the Geocoding API, billed separately from the map loads. Set `GeocodeCenterOnMove` to false when you only need coordinates.
 
 ## Troubleshooting
 
-- **Map Not Loading**: Verify that the `ApiKey` and `MapId` are valid and the Maps JavaScript API is enabled in the Google Cloud Console.
+- **Map Not Loading**: Verify that the `ApiKey` is valid and the Maps JavaScript API is enabled in the Google Cloud Console.
+- **Markers Not Showing**: Advanced markers need a `MapId`. Check the browser console for the warning.
+- **No Address In The Callbacks**: Enable the Geocoding API for the same key in the Google Cloud Console.
 
 ## Contributing
 

@@ -11,8 +11,6 @@ public partial class GoogleMapComponent
     {
         if (string.IsNullOrWhiteSpace(ApiKey))
             throw new ArgumentException("API Key is required to load Google Maps.", nameof(ApiKey));
-        if (string.IsNullOrWhiteSpace(MapId))
-            throw new ArgumentException("MapId is required to identify the map instance.", nameof(MapId));
 
         if (Attributes == null)
         {
@@ -52,6 +50,10 @@ public partial class GoogleMapComponent
                 if (OnClick.HasDelegate)
                 {
                     await GoogleMapsModule.InvokeVoidAsync("enableMapClick", dotNetRef, nameof(OnMapClick));
+                }
+                if (ShowCenterPin || OnCenterChanged.HasDelegate)
+                {
+                    await EnableCenterPin();
                 }
                 if (OnMapReady.HasDelegate)
                 {

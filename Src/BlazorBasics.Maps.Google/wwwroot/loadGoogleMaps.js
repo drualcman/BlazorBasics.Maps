@@ -15,6 +15,17 @@ let loadResolve = null;
 let loadReject = null;
 let zoomLevel = 13;
 let closePopupWhenClickOther = false;
+let centerPinElement = null;
+let centerPinSvg = null;
+let centerDragEndListener = null;
+let centerZoomListener = null;
+let centerDotNetHelper = null;
+let centerMethodName = null;
+let centerGeocodeEnabled = true;
+let centerDebounceMilliseconds = 300;
+let centerDebounceTimer = null;
+
+const DEFAULT_CENTER_PIN_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"><path fill="#d93025" stroke="#ffffff" stroke-width="1" d="M12 2c-3.87 0-7 3.13-7 7 0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5" fill="#ffffff"/></svg>';
 
 function googleMapsCallback() {
     if (window.google && window.google.maps) {
@@ -67,59 +78,97 @@ function initMap(elementId, mapId, closeOnClick, zoom) {
     closePopupWhenClickOther = closeOnClick ?? false;
     zoomLevel = zoom ?? 13;
     myElementId = elementId;
-    myMapId = mapId;
-    map = new google.maps.Map(document.getElementById(myElementId), {
+    myMapId = (mapId && mapId.trim() !== '') ? mapId : null;
+    const options = {
         center: { lat: 0, lng: 0 },
         zoom: zoomLevel,
         fullscreenControl: false,
         streetViewControl: false,
         mapTypeControl: false,
         rotateControl: false,
-        gestureHandling: "cooperative",
-        mapId: myMapId
-    });
+        gestureHandling: "cooperative"
+    };
+    if (myMapId) {
+        options.mapId = myMapId;
+    }
+    map = new google.maps.Map(document.getElementById(myElementId), options);
 
     directionsService = new google.maps.DirectionsService();
     geocoder = new google.maps.Geocoder();
     console.info('initMap:', myElementId);
 }
 
+function mapGeocoderResult(result) {
+    const placeDetails = {
+        streetNumber: '',
+        route: '',
+        neighborhood: '',
+        locality: '',
+        administrativeArea: '',
+        country: '',
+        postalCode: ''
+    };
+    (result.address_components || []).forEach(component => {
+        const types = component.types;
+        if (types.includes('street_number')) placeDetails.streetNumber = component.long_name;
+        if (types.includes('route')) placeDetails.route = component.long_name;
+        if (types.includes('neighborhood') || types.includes('sublocality')) placeDetails.neighborhood = component.long_name;
+        if (types.includes('locality') || types.includes('administrative_area_level_2')) placeDetails.locality = component.long_name;
+        if (types.includes('administrative_area_level_1')) placeDetails.administrativeArea = component.long_name;
+        if (types.includes('country')) placeDetails.country = component.long_name;
+        if (types.includes('postal_code')) placeDetails.postalCode = component.long_name;
+    });
+    return { address: result.formatted_address || '', placeDetails: placeDetails };
+}
+
+function reverseGeocode(lat, lng, callback) {
+    if (!geocoder) {
+        callback('', null);
+        return;
+    }
+    const latLng = new google.maps.LatLng(lat, lng);
+    geocoder.geocode({ location: latLng }, (results, status) => {
+        if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+            const mapped = mapGeocoderResult(results[0]);
+            callback(mapped.address, mapped.placeDetails);
+        } else {
+            console.warn('Geocoder failed due to: ' + status);
+            callback('', null);
+        }
+    });
+}
+
 function sendClickToBlazor(lat, lng, markerId = null) {
     if (dotNetHelper && mapClickMethodName) {
-        const latLng = new google.maps.LatLng(lat, lng);
-        geocoder.geocode({ location: latLng }, (results, status) => {
-            let address = '';
-            let placeDetails = null;
-
-            if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
-                const result = results[0];
-                address = result.formatted_address || '';
-                placeDetails = {
-                    streetNumber: '',
-                    route: '',
-                    neighborhood: '',
-                    locality: '',
-                    administrativeArea: '',
-                    country: '',
-                    postalCode: ''
-                };
-                result.address_components.forEach(component => {
-                    const types = component.types;
-                    if (types.includes('street_number')) placeDetails.streetNumber = component.long_name;
-                    if (types.includes('route')) placeDetails.route = component.long_name;
-                    if (types.includes('neighborhood') || types.includes('sublocality')) placeDetails.neighborhood = component.long_name;
-                    if (types.includes('locality') || types.includes('administrative_area_level_2')) placeDetails.locality = component.long_name;
-                    if (types.includes('administrative_area_level_1')) placeDetails.administrativeArea = component.long_name;
-                    if (types.includes('country')) placeDetails.country = component.long_name;
-                    if (types.includes('postal_code')) placeDetails.postalCode = component.long_name;
-                });
-            } else {
-                console.warn('Geocoder failed due to: ' + status);
-            }
-
+        reverseGeocode(lat, lng, (address, placeDetails) => {
             dotNetHelper.invokeMethodAsync(mapClickMethodName, lat, lng, address, placeDetails, markerId);
         });
     }
+}
+
+function geocodeAddress(address) {
+    return new Promise((resolve) => {
+        if (!geocoder || !address || address.trim() === '') {
+            resolve(null);
+            return;
+        }
+        geocoder.geocode({ address: address }, (results, status) => {
+            if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+                const result = results[0];
+                const location = result.geometry.location;
+                const mapped = mapGeocoderResult(result);
+                resolve({
+                    latitude: location.lat(),
+                    longitude: location.lng(),
+                    address: mapped.address,
+                    details: mapped.placeDetails
+                });
+            } else {
+                console.warn('Geocoder address search failed due to: ' + status);
+                resolve(null);
+            }
+        });
+    });
 }
 
 function enableMapClick(dotNetReference, methodName) {
@@ -152,6 +201,134 @@ function disableMapClick() {
     return false;
 }
 
+function warnWhenMapIdIsMissing() {
+    if (!myMapId) {
+        console.warn('Advanced markers need a MapId. Set the MapId parameter to render markers, the center pin works without it.');
+        return true;
+    }
+    return false;
+}
+
+function createCenterPin(svgIcon) {
+    if (!map) return false;
+    removeCenterPin();
+    const container = map.getDiv();
+    if (!container) return false;
+    if (window.getComputedStyle(container).position === 'static') {
+        container.style.position = 'relative';
+    }
+    centerPinSvg = (svgIcon && svgIcon.trim() !== '') ? svgIcon : DEFAULT_CENTER_PIN_SVG;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'blazorbasics-map-center-pin';
+    wrapper.style.position = 'absolute';
+    wrapper.style.left = '50%';
+    wrapper.style.top = '50%';
+    wrapper.style.transform = 'translate(-50%, -100%)';
+    wrapper.style.pointerEvents = 'none';
+    wrapper.style.zIndex = '9999';
+    wrapper.innerHTML = centerPinSvg;
+    container.appendChild(wrapper);
+    centerPinElement = wrapper;
+    return true;
+}
+
+function removeCenterPin() {
+    if (centerPinElement && centerPinElement.parentNode) {
+        centerPinElement.parentNode.removeChild(centerPinElement);
+    }
+    centerPinElement = null;
+    return true;
+}
+
+function notifyCenterChanged() {
+    if (!map || !centerDotNetHelper || !centerMethodName) return;
+    const center = map.getCenter();
+    if (!center) return;
+    const lat = center.lat();
+    const lng = center.lng();
+    if (!centerGeocodeEnabled) {
+        centerDotNetHelper.invokeMethodAsync(centerMethodName, lat, lng, '', null, null);
+        return;
+    }
+    reverseGeocode(lat, lng, (address, placeDetails) => {
+        centerDotNetHelper.invokeMethodAsync(centerMethodName, lat, lng, address, placeDetails, null);
+    });
+}
+
+function scheduleCenterChanged() {
+    if (centerDebounceTimer) {
+        clearTimeout(centerDebounceTimer);
+    }
+    centerDebounceTimer = setTimeout(() => {
+        centerDebounceTimer = null;
+        notifyCenterChanged();
+    }, centerDebounceMilliseconds);
+}
+
+function attachCenterListeners() {
+    if (!map) return false;
+    if (!centerDragEndListener) {
+        centerDragEndListener = google.maps.event.addListener(map, 'dragend', () => scheduleCenterChanged());
+    }
+    if (!centerZoomListener) {
+        centerZoomListener = google.maps.event.addListener(map, 'zoom_changed', () => scheduleCenterChanged());
+    }
+    return true;
+}
+
+function detachCenterListeners() {
+    if (centerDragEndListener) {
+        google.maps.event.removeListener(centerDragEndListener);
+        centerDragEndListener = null;
+    }
+    if (centerZoomListener) {
+        google.maps.event.removeListener(centerZoomListener);
+        centerZoomListener = null;
+    }
+    if (centerDebounceTimer) {
+        clearTimeout(centerDebounceTimer);
+        centerDebounceTimer = null;
+    }
+    return true;
+}
+
+function enableCenterPin(dotNetReference, methodName, svgIcon, geocode, debounceMilliseconds) {
+    if (!map) {
+        console.warn('Map not initialized. Cannot enable center pin.');
+        return false;
+    }
+    centerDotNetHelper = dotNetReference;
+    centerMethodName = methodName;
+    centerGeocodeEnabled = geocode !== false;
+    centerDebounceMilliseconds = debounceMilliseconds ?? 300;
+    createCenterPin(svgIcon);
+    attachCenterListeners();
+    console.info('Center pin enabled');
+    return true;
+}
+
+function disableCenterPin() {
+    detachCenterListeners();
+    removeCenterPin();
+    centerDotNetHelper = null;
+    centerMethodName = null;
+    centerPinSvg = null;
+    console.info('Center pin disabled');
+    return true;
+}
+
+function refreshCenter() {
+    notifyCenterChanged();
+    return true;
+}
+
+function getCenter() {
+    if (!map) return null;
+    const center = map.getCenter();
+    if (!center) return null;
+    return { latitude: center.lat(), longitude: center.lng() };
+}
+
 function addPoint(id, lat, lng, desc, svgIcon, htmlContent) {
     if (!map) {
         console.warn("Map not initialized. Cannot addPoint.");
@@ -161,6 +338,7 @@ function addPoint(id, lat, lng, desc, svgIcon, htmlContent) {
         console.warn("Cannot override route marker with addPoint, id: " + id);
         return false;
     }
+    warnWhenMapIdIsMissing();
 
     const position = new google.maps.LatLng(lat, lng);
 
@@ -246,7 +424,38 @@ function cleanMap() {
     markers.clear();
     routes.clear();
     infoWindows.clear();
+
+    const hadMapClick = mapClickListener !== null;
+    const hadPopupClose = popupClickListener !== null;
+    const hadCenterPin = centerDotNetHelper !== null;
+    const previousClickHelper = dotNetHelper;
+    const previousClickMethod = mapClickMethodName;
+    const previousPinSvg = centerPinSvg;
+
+    if (mapClickListener) {
+        google.maps.event.removeListener(mapClickListener);
+        mapClickListener = null;
+    }
+    if (popupClickListener) {
+        google.maps.event.removeListener(popupClickListener);
+        popupClickListener = null;
+    }
+    detachCenterListeners();
+    removeCenterPin();
+
     initMap(myElementId, myMapId, closePopupWhenClickOther, zoomLevel);
+
+    if (hadMapClick) {
+        enableMapClick(previousClickHelper, previousClickMethod);
+    }
+    if (hadPopupClose) {
+        enablePopupCloseOnClickOutside();
+    }
+    if (hadCenterPin) {
+        createCenterPin(previousPinSvg);
+        attachCenterListeners();
+    }
+
     console.log('Map cleared');
     return true;
 }
@@ -394,6 +603,8 @@ function showRoute(id, startPoint, endPoint, travelMode = "DRIVING", color = "#4
 
     if (routes.has(id)) removeRoute(id);
 
+    warnWhenMapIdIsMissing();
+
     const arrowOptions = startPoint.arrowOptions || null;
     const renderer = createDirectionsRenderer(color, arrowOptions);
 
@@ -442,6 +653,8 @@ function showRouteWithWaypoints(id, points, travelMode = "DRIVING", defaultColor
         console.warn("At least 2 points (start and end) are required.");
         return false;
     }
+
+    warnWhenMapIdIsMissing();
 
     const localMarkers = [];
     const renderers = [];
@@ -633,6 +846,11 @@ export {
     initMap,
     enableMapClick,
     disableMapClick,
+    enableCenterPin,
+    disableCenterPin,
+    refreshCenter,
+    getCenter,
+    geocodeAddress,
     addPoint,
     centerMap,
     removePoint,
