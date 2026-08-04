@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
 	  <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <Version>1.2.1</Version>
+	  <Version>1.3.2</Version>
 	  <Authors>Sergi Ortiz Gomez</Authors>
 	  <Company>DrUalcman</Company>
 	  <Description>
@@ -16,7 +16,14 @@
 	  <RepositoryUrl>https://github.com/drualcman/BlazorBasics.Maps</RepositoryUrl>
 	  <PackageProjectUrl>https://github.com/drualcman/BlazorBasics.Maps</PackageProjectUrl>
 	  <PackageTags>Components;Blazor;WebAssembly;Maps;Geolocation;</PackageTags>
-	  <PackageReleaseNotes>Update dependencies.</PackageReleaseNotes>
+	  <PackageReleaseNotes>
+		  Every position request now carries a timeout, so a request that gets no answer from
+		  the browser ends instead of waiting forever. Falls back to a low accuracy request
+		  when the gps fix does not arrive. New IExtendedGeolocationService returns why a
+		  reading failed (permission, unavailable, timeout, not supported, insecure context)
+		  instead of a null position. Reading the permission no longer throws where
+		  navigator.permissions does not exist.
+	  </PackageReleaseNotes>
 	  <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
@@ -37,8 +44,8 @@
 	</ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.12" Condition="'$(TargetFramework)' == 'net9.0'" />
-	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.2" Condition="'$(TargetFramework)' == 'net10.0'" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.18" Condition="'$(TargetFramework)' == 'net9.0'" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.10" Condition="'$(TargetFramework)' == 'net10.0'" />
 	  <PackageReference Include="BlazorBasics.Maps.Entities" Version="1.2.0" />
   </ItemGroup>
 	

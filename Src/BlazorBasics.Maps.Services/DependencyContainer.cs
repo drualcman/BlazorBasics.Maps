@@ -1,9 +1,19 @@
-﻿namespace Microsoft.Extensions.DependencyInjection;
+namespace Microsoft.Extensions.DependencyInjection;
 public static class DependencyContainer
 {
-    public static IServiceCollection AddGeoService(this IServiceCollection services)
+    public static IServiceCollection AddGeoService(this IServiceCollection services) =>
+        services.AddGeoService(null);
+
+    public static IServiceCollection AddGeoService(this IServiceCollection services,
+        Action<GeolocationRequestOptions> setupOptions)
     {
-        services.AddScoped<IGeolocationService, GeolocationService>();
+        GeolocationRequestOptions options = new();
+        setupOptions?.Invoke(options);
+
+        services.AddSingleton(options);
+        services.AddScoped<IExtendedGeolocationService, GeolocationService>();
+        services.AddScoped<IGeolocationService>(provider =>
+            provider.GetRequiredService<IExtendedGeolocationService>());
         return services;
     }
 }
